@@ -4,23 +4,23 @@
 #include <string>
 #include <vector>
 
-// GÖREV YAPISI: Bir işin özelliklerini tutar
+// GÖREV YAPISI
 struct Gorev {
-    std::string ad;          // Görevin adı
-    int zorlukDerecesi;      // 1-5 arası zorluk
-    int beklenenSure;        // Dakika cinsinden planlanan süre
-    int bitirmeSuresi;       // Gerçekleşen bitirme süresi
+    std::string ad;
+    int zorlukDerecesi;
+    int beklenenSure;
+    int bitirmeSuresi;
 };
 
-// ÇALIŞAN YAPISI: Kullanıcının puan ve rozetlerini tutar
+// ÇALIŞAN YAPISI
 struct Calisan {
     std::string isim;
     int toplamPuan;
     std::vector<std::string> rozetler;
-    int hizliBitirmeSayaci;  // Özel rozet için sayaç
+    int hizliBitirmeSayaci;
 };
 
-// Fonksiyonların İmzaları (Gövdesi .cpp dosyasında olacak)
+// Fonksiyon Tanımları
 int puanHesapla(Gorev g);
 void rozetKontrol(Calisan &kullanici, Gorev g);
 
