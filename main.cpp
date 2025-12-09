@@ -1,66 +1,72 @@
 #include <iostream>
 #include <vector>
-#include "RewardSystem.h" // Kendi yazdığımız başlık dosyasını dahil ediyoruz
+#include <limits> // Hata kontrolü için
+#include "RewardSystem.h" // Kendi başlık dosyamızı ekliyoruz
 
 using namespace std;
 
 int main() {
-    // 1. ADIM: Bir çalışan profili oluşturuyoruz
-    Calisan ekipUyesi;
-    ekipUyesi.isim = "Mehmet Demir"; // Senin veya ekip arkadaşının adı
-    ekipUyesi.toplamPuan = 0;
-    ekipUyesi.hizliBitirmeSayaci = 0;
+    Calisan sen;
+    sen.isim = "Kullanici";
+    sen.toplamPuan = 0;
+    sen.hizliBitirmeSayaci = 0;
 
-    cout << "=== PROJE YONETIM SISTEMI BASLATILDI ===" << endl;
-    cout << "Calisan: " << ekipUyesi.isim << " | Baslangic Puani: " << ekipUyesi.toplamPuan << endl << endl;
+    cout << "=== INTERAKTIF PROJE SISTEMI ===" << endl;
+    cout << "Sisteme hos geldin. Gorevlerini gir, puanini kap!" << endl;
 
-    // 2. ADIM: Test için 4 farklı görev tanımlıyoruz
-    // Format: {Ad, Zorluk(1-5), BeklenenSure, BitirmeSuresi}
-    vector<Gorev> gorevListesi = {
-        {"Arayuz Tasarimi", 3, 60, 50},  // Hızlı (Bonus alır)
-        {"Veritabani Baglantisi", 4, 90, 60},  // Çok Hızlı (Bonus + Sayaç artar)
-        {"Rapor Hazirlama", 2, 40, 30},  // Hızlı (Bonus + Sayaç artar)
-        {"Sunum Provası", 5, 120, 90}   // Hızlı (Bonus + Sayaç artar -> ROZET GELMELİ)
-    };
+    char devamMi = 'e';
 
-    // 3. ADIM: Görevleri sırayla işleme alıyoruz (Simülasyon)
-    for (int i = 0; i < gorevListesi.size(); i++) {
-        Gorev g = gorevListesi[i];
+    while (devamMi == 'e' || devamMi == 'E') {
+        Gorev yeniGorev;
+
+        cout << "\n-----------------------------------" << endl;
+        cout << ">> YENI GOREV GIRISI" << endl;
         
-        cout << "------------------------------------------" << endl;
-        cout << "Gorev " << i+1 << ": " << g.ad << " (Zorluk: " << g.zorlukDerecesi << ")" << endl;
-        cout << "Durum: Beklenen " << g.beklenenSure << " dk, Bitirilen " << g.bitirmeSuresi << " dk." << endl;
+        // 1. Görev Adı
+        cout << "1. Gorev Adi (Orn: Arayuz Tasarimi): ";
+        cin >> ws; // Tampon temizliği
+        getline(cin, yeniGorev.ad);
 
-        // Puan Hesapla
-        int kazanilan = puanHesapla(g);
-        ekipUyesi.toplamPuan += kazanilan;
-        
-        cout << "-> Kazanilan Puan: " << kazanilan << endl;
-        cout << "-> Guncel Toplam Puan: " << ekipUyesi.toplamPuan << endl;
-
-        // Rozet Kontrolü (Burada 'Hızlı Çözücü' kontrolü yapılıyor)
-        rozetKontrol(ekipUyesi, g);
-    }
-
-    // 4. ADIM: Final Raporu
-    cout << "\n==========================================" << endl;
-    cout << " GUN SONU RAPORU " << endl;
-    cout << "==========================================" << endl;
-    cout << "Isim: " << ekipUyesi.isim << endl;
-    cout << "Toplam Puan: " << ekipUyesi.toplamPuan << endl;
-    cout << "Kazanilan Rozetler: ";
-    
-    if (ekipUyesi.rozetler.empty()) {
-        cout << "Yok";
-    } else {
-        for (const string& r : ekipUyesi.rozetler) {
-            cout << "[" << r << "] ";
+        // 2. Zorluk Derecesi (Hata korumalı)
+        cout << "2. Zorluk Derecesi (1-5 arasi): ";
+        while(!(cin >> yeniGorev.zorlukDerecesi)){
+            cout << "HATA: Lutfen sadece sayi giriniz (1-5): ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
-    }
-    cout << endl << "==========================================" << endl;
 
-    // Konsol hemen kapanmasın diye (Windows kullanıyorsan)
-    // cin.get(); 
-    
+        // 3. Beklenen Süre
+        cout << "3. Bu is icin verilen sure (dk): ";
+        while(!(cin >> yeniGorev.beklenenSure)){
+            cout << "HATA: Lutfen sadece sayi giriniz: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        // 4. Bitirme Süresi
+        cout << "4. Sen kac dakikada bitirdin?: ";
+        while(!(cin >> yeniGorev.bitirmeSuresi)){
+            cout << "HATA: Lutfen sadece sayi giriniz: ";
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+
+        // --- HESAPLAMA ---
+        cout << "\n--- Sonuclar Hesaplaniyor ---" << endl;
+        int puan = puanHesapla(yeniGorev);
+        sen.toplamPuan += puan;
+        rozetKontrol(sen, yeniGorev);
+
+        // --- DURUM RAPORU ---
+        cout << "-> Bu Gorevden Puanin: " << puan << endl;
+        cout << "-> TOPLAM PUANIN: " << sen.toplamPuan << endl;
+
+        // --- DEVAM ---
+        cout << "\nBaska gorev girmek ister misin? (e/h): ";
+        cin >> devamMi;
+    }
+
+    cout << "\nSistemden cikis yapildi. Iyi calismalar!" << endl;
+
     return 0;
 }
